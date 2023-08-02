@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Booking</title>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <a href="./booking.html"> <h1>Booking Page</h1></a>
-   
-
+    <h1>booking</h1>
     <div>
-    <label for="filterSeatType">Filter by Seat Type</label>
-    <select name="" id="filterSeatType">
-    <option value="">All</option>
-    <option value="AC First Class">AC First Class</option>
-    <option value="Sleeper Class">Sleeper Class</option>
-    <option value="Second Class">Second Class</option>
-    <option value="General">General</option>
-    </select>
-    <button id="applyFilter">Apply Filter</button>
-</div>
+        <label for="filterSeatType">Filter by Seat Type</label>
+        <select name="" id="filterSeatType">
+        <option value="">All</option>
+        <option value="AC First Class">AC First Class</option>
+        <option value="Sleeper Class">Sleeper Class</option>
+        <option value="Second Class">Second Class</option>
+        <option value="General">General</option>
+        </select>
+        <button id="applyFilter">Apply Filter</button>
+    </div>
 
-    <div id="dashboard">
+    
+    <button id="sortByAge">Sort by Age</button>
+    <button id="sortByDate">Sort by Journey Date</button>
+    
+    <div id="booking">
         <table id="usert">
             <thead>
                 <tr>
@@ -48,6 +49,6 @@
     </div>
 
 
-    <script src="dashboard.js"></script>
+    <script src="booking.js"></script>
 </body>
 </html>

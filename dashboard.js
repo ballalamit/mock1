@@ -1,133 +1,135 @@
 
-  
+    const userList = document.getElementById('userList');
+    const users = JSON.parse(localStorage.getItem('registrationformData')) || [];
+    let otp ;
+    function updateUserList(users) {
+        userList.innerHTML ="";
+
+        users.map((user) => {
+             otp = Math.floor(Math.random() * 9000 ) + 1000;
+
+            const tablerow= document.createElement('tr');
+
+            tablerow.innerHTML = `
+                <td>${user.uniqueId}</td>
+                <td>${user.name}</td>
+                <td>${user.age}</td>
+                <td>${user.fromStation}</td>
+                <td>${user.toStation}</td>
+                <td>${user.journeyDate}</td>
+                <td>${user.seatType}</td>
+                <td>${otp}</td>
+                <td>
+                    <button class="rejectButton"> Reject</button>
+
+                 <button class="confirmButton"> Confirm </button></td>
+            `
+
+            userList.append(tablerow)
+            user.otp = otp
+        })
+    }
+
+    updateUserList(users)
 
 
+    userList.addEventListener('click', (event) => {
+        if(event.target.classList.contains('rejectButton')){
+            const row = event.target.closest('tr');
+            const uniqueId = row.querySelector('td:first-child').textContent;
+            row.remove();
 
-document.addEventListener('DOMContentLoaded', () => {
-    const usersTableBody = document.getElementById('usersTableBody');
-    const ageSortButton = document.getElementById('ageSortButton');
-    const vaccineFilter = document.getElementById('vaccineFilter');
-    const priorityFilter = document.getElementById('priorityFilter');
-    let usersData = getUsers();
-  
-    renderUsers();
-  
-    ageSortButton.addEventListener('click', () => {
-      sortUsersByAge();
-      renderUsers();
-    });
-  
-    vaccineFilter.addEventListener('change', () => {
-      filterUsers();
-    });
-  
-    priorityFilter.addEventListener('change', () => {
-      filterUsers();
-    });
-  
-    function renderUsers() {
-      usersTableBody.innerHTML = '';
-  
-      for (const user of usersData) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${user.uniqueId}</td>
-          <td>${user.name}</td>
-          <td>${user.age}</td>
-          <td>${user.designation}</td>
-          <td>${user.priority}</td>
-          <td>${user.vaccine}</td>
-          <td>${generateOTP()}</td>
-          <td><button class="delete-button">Delete</button></td>
-          <td><button class="vaccinate-button">Vaccinate</button></td>
-        `;
-  
-        const deleteButton = row.querySelector('.delete-button');
-        deleteButton.addEventListener('click', () => {
-          deleteUser(user.uniqueId);
-          row.remove();
-        });
-  
-        const vaccinateButton = row.querySelector('.vaccinate-button');
-        vaccinateButton.addEventListener('click', () => {
-            window.location.replace('vaccinated.html');
-          showOTPComponent(user.otp, () => {
-         
-            showAlert(`${user.name} Added to Queue`);
-            setTimeout(() => {
-              showAlert(`Vaccinating ${user.vaccine}`);
-              setTimeout(() => {
-                showAlert(`${user.name} Vaccinated`);
-                deleteUser(user.uniqueId);
-                saveVaccinatedUser(user);
-                row.remove();
-                window.location.replace('vaccinated.html'); // Redirect to vaccinated.html
-              }, 1000);
-            }, 5000);
-          });
-        });
-        usersTableBody.appendChild(row);
-      }
+           const Updatedusers=users.filter((user)=>{
+                return user.uniqueId !== uniqueId;
+            })
+
+            
+            // let users;
+            users.length =0;
+            users.push(...Updatedusers);
+            // users.splice(0, users.length, ...Updatedusers)
+            console.log(users)
+
+            localStorage.setItem('registrationformData', JSON.stringify(users))
+            UpdateduserList(users)
+
+        }
+        else if(event.target.classList.contains('confirmButton')){
+            const row = event.target.closest('tr');
+            const uniqueId = row.querySelector('td:first-child').textContent;
+
+            const user=users.find((u)=>{
+                return u.uniqueId == uniqueId;
+            })
+            console.log("amit",user)
+
+            handleConfirmButton(user)
+        }
+    })
+
+    function displayAlert(msg, delay){
+        return new Promise((resolve, reject) =>{
+            setTimeout(()=>{
+                alert(msg);
+                resolve();
+            },delay)
+        })
     }
-  
-    function getUsers() {
-      const existingData = localStorage.getItem('users');
-      return existingData ? JSON.parse(existingData) : [];
+
+    function handleConfirmButton (user) {
+        const otp = parseInt(prompt('Enter the OTP'));
+        console.log(user.otp )
+        console.log("entered", otp)
+
+        if(otp == user.otp){
+            displayAlert(`${user.name} added to waiting list`, 0).
+            then(()=>{
+                displayAlert(`Booking ticket from ${user.fromStation} to ${user.toStation} - after 5 seconds`, 5000)
+
+            }).then(() =>{
+                displayAlert(`Ticket booked for ${user.journeyDate}`, 10000)
+            }).then(() =>{
+                const bookedUsers = JSON.parse(localStorage.getItem('booked')) || [];
+                bookedUsers.push(user);
+                localStorage.setItem('booked', JSON.stringify(bookedUsers));
+                console.log(user.uniqueId)
+
+                // const row = userList.querySelector(`tr td:first-child:contains(${user.uniqueId})`).closest('tr')
+                
+                const row = Array.from(userList.querySelectorAll('tr')).find((row) =>{
+                    const firstC = row.querySelector('td:first-child');
+                    return firstC.textContent == user.uniqueId;
+                })
+                if(row){
+                    row.remove();
+                }
+               
+                users= users.filter(u => u.uniqueId != user.uniqueId)
+                localStorage.setItem('registrationformData', JSON.stringify(users))
+            })
+        }
+        else{
+            alert('Incorrect OTP')
+        }
     }
-  
-    function generateOTP() {
-      return Math.floor(1000 + Math.random() * 9000);
+
+    let filterSeatType = document.getElementById("filterSeatType")
+    const applyFilterButton = document.getElementById("applyFilter")
+
+function filterAndSortUsers() {
+    const selectedSeatType = filterSeatType.value
+    let filteredUsers = users;
+
+    if(selectedSeatType){
+        filteredUsers = users.filter((user) => user.seatType == selectedSeatType)
     }
-  
-    function deleteUser(uniqueId) {
-      usersData = usersData.filter((user) => user.uniqueId !== uniqueId);
-      localStorage.setItem('users', JSON.stringify(usersData));
-    }
-  
-    function saveVaccinatedUser(user) {
-      const vaccinatedUsers = getVaccinatedUsers();
-      vaccinatedUsers.push(user);
-      localStorage.setItem('vaccinated', JSON.stringify(vaccinatedUsers));
-    }
-  
-    function getVaccinatedUsers() {
-      const existingData = localStorage.getItem('vaccinated');
-      return existingData ? JSON.parse(existingData) : [];
-    }
-  
-    function showOTPComponent(otp, callback) {
-      const enteredOTP = prompt('Enter OTP:');
-      if (enteredOTP && enteredOTP === otp.toString()) {
-        callback();
-      } else {
-        alert('Invalid OTP. Please try again.');
-      }
-    }
-  
-    function showAlert(message) {
-      alert(message);
-    }
-  
-    function sortUsersByAge() {
-      usersData.sort((a, b) => a.age - b.age);
-    }
-  
-    function filterUsers() {
-      const selectedVaccine = vaccineFilter.value;
-      const selectedPriority = priorityFilter.value;
-  
-      usersData = getUsers();
-  
-      if (selectedVaccine !== 'All') {
-        usersData = usersData.filter((user) => user.vaccine === selectedVaccine);
-      }
-  
-      if (selectedPriority !== 'All') {
-        usersData = usersData.filter((user) => user.priority === selectedPriority);
-      }
-  
-      renderUsers();
-    }
-  });
-  
-  //dsjhdjd
+    return filteredUsers
+}
+
+function applyFilterAndSOrt(){
+    const filteredUsers = filterAndSortUsers();
+    updateUserList(filteredUsers)
+}
+
+applyFilterButton.addEventListener('click', applyFilterAndSOrt);
+updateUserList(filterAndSortUsers())

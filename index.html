@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    
+    <h1>User Registration</h1>
+    <form id="registrationform">
+        <label for="uniqueId">UniqueId:</label>
+        <input type="text" id="uniqueId" required>
+        <br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        <br>
+
+        <label for="age" min="18" max="40">Age:</label>
+        <input type="text" id="age" required>
+        <br>
+
+        <label for="fromStation">From Station</label>
+        <select name="city" id="fromStation" required>
+            <option value="Banglore">Banglore</option>
+            <option value="Pune">Pune</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Delhi">Delhi</option>
+        </select>
+        <br>
+
+        <label for="toStation">To Station</label>
+        <select name="city" id="toStation" required>
+            <option value="Banglore">Banglore</option>
+            <option value="Pune">Pune</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Delhi">Delhi</option>
+        </select>
+        <br>
+
+        <label for="journeyDate">Journey Date:</label>
+        <input type="date" name="journeyDate" id="journeyDate" required>
+
+
+        <label for="seatType">Seat Type:</label>
+        <select name="seat" id="seatType" required>
+            <option value="AC First Class">AC First Class</option>
+            <option value="Sleeper Class"> Sleeper Class</option>
+            <option value="Second Class">Second Class</option>
+            <option value="General">General</option>
+        </select>
+        <br>
+        <button type="submit">Register</button>
+
+    </form>
+
+
+    <script src="index.js"></script>
+
+</body>
+</html>
